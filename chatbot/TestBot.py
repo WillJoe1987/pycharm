@@ -1,5 +1,9 @@
 import requests
 import itchat
+from itchat.content import *
+from chatbot.files.mychatdirectory import *
+import datetime
+
 KEY = '2c242b43e94a4e0ca984629828d4e164'
 def get_response(msg):
     # 构造了要发送给服务器的数据
@@ -23,28 +27,38 @@ def get_response(msg):
         return
 
 # 使用装饰器
-@itchat.msg_register(itchat.content.INCOME_MSG)
-#获取图灵机器人返回的数据
-#处理图灵机器人出现异常的时候
+@itchat.msg_register(TEXT,isFriendChat=True, isGroupChat=True, isMpChat=True)
 def tuling_reply(msg):
     # 为了保证在图灵Key出现问题的时候仍旧可以回复，这里设置一个默认回复
     finalMsg = ''
     defaultReply = 'I received: ' + finalMsg
     reply = ''
+    msgNickName = msg.User.RemarkName or msg.User.NickName
+    time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') +" : "
     try:
         for m in msg['Text']:
-            finalMsg += m;
+            finalMsg += m
+        recordfile = open("D://wechatrecord/"+msgNickName+'.txt',mode = 'a+',encoding='utf-8')
+        recordfile.write('\n'+time+finalMsg)
+    except BaseException as e:
+        print(e)
     finally:
         # 如果图灵Key出现问题，那么reply将会是None
-        reply = get_response(msg['Text'])
+        #reply = get_response(msg['Text'])
         # a or b的意思是，如果a有内容，那么返回a，否则返回b
         # 有内容一般就是指非空或者非None，你可以用`if a: print('True')`来测试
         print('RECEIVED:' + finalMsg)
-        print('REPLY:' + reply or defaultReply)
+        #print('REPLY:' + reply or defaultReply)
         # itchat.send(reply or defaultReply, msg['FromUserName'])
-        return reply or defaultReply
+        return False #reply or defaultReply
 
-
+@itchat.msg_register([PICTURE, RECORDING, ATTACHMENT, VIDEO])
+def get_files(msg):
+    # me = itchat.get_friends()[0]
+    # directory = get_msg_directory(me, msg)
+    msg.download(msg.FileName)
+    # msg['Text'](msg['FileName'])
+    return False
 
 # 为了让实验过程更加方便（修改程序不用多次扫码），我们使用热启动
 itchat.auto_login(hotReload=True)
