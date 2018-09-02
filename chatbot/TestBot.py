@@ -1,7 +1,6 @@
 import requests
 import itchat
 from itchat.content import *
-from chatbot.files.mychatdirectory import *
 import datetime
 
 KEY = '2c242b43e94a4e0ca984629828d4e164'
