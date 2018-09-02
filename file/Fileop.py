@@ -1,3 +1,5 @@
+import os
+
 class fileop:
     filename = "d://s.txt"
     file = False
@@ -26,3 +28,18 @@ class fileop:
         else:
             self.create()
             self.write(content)
+
+
+def test():
+    try:
+        path = "D:/wechatreco/rd"
+        if os.path.exists(path):
+            print('yes')
+        else:
+            print('no')
+            os.makedirs(path)
+            test()
+    except BaseException as e:
+        print(e)
+
+test()
