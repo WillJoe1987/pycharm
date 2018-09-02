@@ -86,4 +86,5 @@ def get_files(msg):
 itchat.auto_login(hotReload=True)
 friends = itchat.get_friends()
 current_name = friends[0].NickName
+os.chdir(base_path)
 itchat.run()
