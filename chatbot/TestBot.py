@@ -3,8 +3,8 @@ import itchat
 from itchat.content import *
 import datetime
 import os
-
-KEY = '2c242b43e94a4e0ca984629828d4e164'
+KEY = '6be4aa0dff5741d48c1000961c6c6b1a'#李特尔飞什
+#KEY = '2c242b43e94a4e0ca984629828d4e164'#东妹
 
 friends = None
 #current_name=''
@@ -49,7 +49,8 @@ def write_msg(msg):
 def get_response(msg):
     # 构造了要发送给服务器的数据
     # 使用图灵机器人提供的接口
-    apiUrl = 'http://www.tuling123.com/openapi/api'
+    apiUrl = 'http://www.tuling123.com/openapi/api'#v1
+    #apiUrl = 'http://openapi.tuling123.com/openapi/api/v2'
     #一个发动的api的数据
     data = {
         'key'    : KEY,
@@ -97,5 +98,5 @@ def get_files(msg):
 itchat.auto_login(hotReload=True)
 friends = itchat.get_friends()
 current_name = friends[0].NickName
-os.chdir(base_path)
+os.chdir(base_path+'/'+current_name)
 itchat.run()
