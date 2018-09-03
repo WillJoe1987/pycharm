@@ -7,7 +7,7 @@ import os
 KEY = '2c242b43e94a4e0ca984629828d4e164'
 
 friends = None
-current_name=''
+#current_name=''
 base_path = 'D:/wechatrecord/'
 
 def get_friend_name(friend_key_name, friends = friends):
@@ -17,6 +17,12 @@ def get_friend_name(friend_key_name, friends = friends):
         if f.UserName == friend_key_name:
             return f.RemarkName or f.NickName
     return friend_key_name
+
+def get_actual_name(msg):
+    if hasattr(msg, 'ActualNickName'):
+        return msg.ActualNickName
+    else :
+        return False
 
 def get_current_name():
     return friends[0].NickName
@@ -30,9 +36,10 @@ def write_msg(msg):
             os.mkdir(user_path)
         message_file_name = user_path+'/'+(msg.User.RemarkName or msg.User.NickName)+'.txt'
         message_file = open(message_file_name,mode='a+',encoding='utf-8')
+        aNickName = get_actual_name(msg) or get_friend_name(msg.FromUserName)
         for m in msg['Text']:
             finalMsg += m
-        finalMsg = time+get_friend_name(msg.FromUserName)+' '+finalMsg
+        finalMsg = time+'['+aNickName+'] '+finalMsg
         message_file.write('\n'+finalMsg)
     except BaseException as e:
         print(e)
