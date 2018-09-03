@@ -72,14 +72,18 @@ def get_response(msg):
 def tuling_reply(msg):
     # 为了保证在图灵Key出现问题的时候仍旧可以回复，这里设置一个默认回复
     # 如果图灵Key出现问题，那么reply将会是None
-    #reply = get_response(msg['Text'])
+
     # a or b的意思是，如果a有内容，那么返回a，否则返回b
     # 有内容一般就是指非空或者非None，你可以用`if a: print('True')`来测试
     finalMsg = write_msg(msg)
-    print(finalMsg)
+    print('【'+(msg.User.RemarkName or msg.User.NickName)+'】'+finalMsg)
     #print('REPLY:' + reply or defaultReply)
     # itchat.send(reply or defaultReply, msg['FromUserName'])
-    return False #reply or defaultReply
+    if msg.FromUserName == itchat.search_friends('宝儿')[0].UserName:
+        reply = get_response(msg['Text'])
+        return reply
+    else:
+        return False #reply or defaultReply
 
 @itchat.msg_register([PICTURE, RECORDING, ATTACHMENT, VIDEO])
 def get_files(msg):
