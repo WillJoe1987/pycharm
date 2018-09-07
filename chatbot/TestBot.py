@@ -3,12 +3,62 @@ import itchat
 from itchat.content import *
 import datetime
 import os
-KEY = '6be4aa0dff5741d48c1000961c6c6b1a'#李特尔飞什
+#KEY = '6be4aa0dff5741d48c1000961c6c6b1a'#李特尔飞什
 #KEY = '2c242b43e94a4e0ca984629828d4e164'#东妹
+robots = {
+    '李特尔飞什': {
+        'KEY' : '6be4aa0dff5741d48c1000961c6c6b1a'
+    },
+    '东妹': {
+        'KEY' : '2c242b43e94a4e0ca984629828d4e164'
+    },
+    '阿咪':{
+        'KEY' : '13d19972340946e5b268dcf77d089f11'
+    }
+}
+
+friends_robots = {}
 
 friends = None
 #current_name=''
 base_path = 'D:/wechatrecord/'
+robot_friends = ['宝儿','李特尔飞什']
+
+def get_robots_key_by_friends(msg):
+    if check_has_robot(msg):
+        return friends_robots[msg.FromUserName]
+    else:
+        return init_friend_robot(msg, '李特尔飞什')
+
+def init_friend_robot(msg, robot = '李特尔飞什'):
+    friends_robots[msg.FromUserName] = robots[robot]['KEY']
+    itchat.send_msg('我是机器人：'+robot,msg.FromUserName)
+    return friends_robots[msg.FromUserName]
+
+def check_and_init_robot(msg):
+    content = get_msg_content(msg)
+    robots_name = '李特尔飞什'
+    if content[0:4] == '机器人：':
+        for key in robots :
+            if content.find(key) > 1:
+                robots_name = key
+                break
+        return init_friend_robot(msg, robots_name)
+
+def check_and_close_robot(msg):
+    content = get_msg_content(msg)
+    if content == '闭嘴机器人':
+        try :
+            del friends_robots[msg.FromUserName]
+        finally:
+            return
+
+def check_has_robot(msg):
+    try:
+        friends_robots[msg.FromUserName]
+    except BaseException as e:
+        return False
+    return True
 
 def get_friend_name(friend_key_name, friends = friends):
     if friends is None:
@@ -37,8 +87,7 @@ def write_msg(msg):
         message_file_name = user_path+'/'+(msg.User.RemarkName or msg.User.NickName)+'.txt'
         message_file = open(message_file_name,mode='a+',encoding='utf-8')
         aNickName = get_actual_name(msg) or get_friend_name(msg.FromUserName)
-        for m in msg['Text']:
-            finalMsg += m
+        finalMsg = get_msg_content(msg)
         finalMsg = time+'['+aNickName+'] '+finalMsg
         message_file.write('\n'+finalMsg)
     except BaseException as e:
@@ -46,7 +95,13 @@ def write_msg(msg):
     finally:
         return finalMsg
 
-def get_response(msg):
+def get_msg_content(msg):
+    finalMsg = ''
+    for m in msg['Text']:
+        finalMsg += m
+    return finalMsg
+
+def get_response(msg,KEY):
     # 构造了要发送给服务器的数据
     # 使用图灵机器人提供的接口
     apiUrl = 'http://www.tuling123.com/openapi/api'#v1
@@ -70,7 +125,7 @@ def get_response(msg):
 
 # 使用装饰器
 @itchat.msg_register(TEXT,isFriendChat=True, isGroupChat=True, isMpChat=True)
-def tuling_reply(msg):
+def tuling_reply(msg, KEY = '6be4aa0dff5741d48c1000961c6c6b1a'):
     # 为了保证在图灵Key出现问题的时候仍旧可以回复，这里设置一个默认回复
     # 如果图灵Key出现问题，那么reply将会是None
 
@@ -80,9 +135,16 @@ def tuling_reply(msg):
     print('【'+(msg.User.RemarkName or msg.User.NickName)+'】'+finalMsg)
     #print('REPLY:' + reply or defaultReply)
     # itchat.send(reply or defaultReply, msg['FromUserName'])
-    if msg.FromUserName == itchat.search_friends('宝儿')[0].UserName:
-        reply = get_response(msg['Text'])
-        return reply
+    aNickName = get_actual_name(msg) or get_friend_name(msg.FromUserName)
+    if aNickName in robot_friends :
+        check_and_close_robot(msg)
+        check_and_init_robot(msg)
+        if check_has_robot(msg):
+            reply = get_response(msg['Text'],get_robots_key_by_friends(msg))
+            print('【机器人】to【'+(msg.User.RemarkName or msg.User.NickName)+'】' + finalMsg)
+            return reply
+        else:
+            return False
     else:
         return False #reply or defaultReply
 
