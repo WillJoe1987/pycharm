@@ -22,7 +22,7 @@ friends_robots = {}
 friends = None
 #current_name=''
 base_path = 'D:/wechatrecord/'
-robot_friends = ['宝儿','李特尔飞什']
+robot_friends = ['宝儿','李特尔飞什','Cherry','全万鹏','尚吉峰']
 
 def get_robots_key_by_friends(msg):
     if check_has_robot(msg):
@@ -38,7 +38,7 @@ def init_friend_robot(msg, robot = '李特尔飞什'):
 def check_and_init_robot(msg):
     content = get_msg_content(msg)
     robots_name = '李特尔飞什'
-    if content[0:4] == '机器人：':
+    if content[0:4] == '机器人：' or content[0:4] == '机器人:':
         for key in robots :
             if content.find(key) > 1:
                 robots_name = key
