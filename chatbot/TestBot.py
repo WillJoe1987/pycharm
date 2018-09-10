@@ -22,7 +22,7 @@ friends_robots = {}
 friends = None
 #current_name=''
 base_path = 'D:/wechatrecord/'
-robot_friends = ['宝儿','李特尔飞什','Cherry','全万鹏','尚吉峰']
+robot_friends = ['宝儿','李特尔飞什','Cherry','全万鹏','尚吉峰','郑春']
 
 def get_robots_key_by_friends(msg):
     if check_has_robot(msg):
@@ -116,15 +116,16 @@ def get_response(msg,KEY):
         #使用post方法去请求
         r = requests.post(apiUrl, data=data).json()
         # 字典的get方法在字典没有'text'值的时候会返回None而不会抛出异常
-        return r.get('text')
+        return r.get('text'), r.get('url', '')
     # 为了防止服务器没有正常响应导致程序异常退出，这里用try-except捕获了异常
     # 如果服务器没能正常交互（返回非json或无法连接），那么就会进入下面的return
-    except:
+    except BaseException as e:
+        print(e)
         # 将会返回一个None
         return
 
 # 使用装饰器
-@itchat.msg_register(TEXT,isFriendChat=True, isGroupChat=True, isMpChat=True)
+@itchat.msg_register([TEXT,MAP,SHARING,CARD],isFriendChat=True, isGroupChat=True, isMpChat=True)
 def tuling_reply(msg, KEY = '6be4aa0dff5741d48c1000961c6c6b1a'):
     # 为了保证在图灵Key出现问题的时候仍旧可以回复，这里设置一个默认回复
     # 如果图灵Key出现问题，那么reply将会是None
@@ -140,9 +141,9 @@ def tuling_reply(msg, KEY = '6be4aa0dff5741d48c1000961c6c6b1a'):
         check_and_close_robot(msg)
         check_and_init_robot(msg)
         if check_has_robot(msg):
-            reply = get_response(msg['Text'],get_robots_key_by_friends(msg))
-            print('【机器人】to【'+(msg.User.RemarkName or msg.User.NickName)+'】' + finalMsg)
-            return reply
+            reply, url = get_response(msg['Text'],get_robots_key_by_friends(msg))
+            print('【机器人】to【'+(msg.User.RemarkName or msg.User.NickName)+'】' + reply + url)
+            return reply+url
         else:
             return False
     else:
