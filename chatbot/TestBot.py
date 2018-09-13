@@ -22,7 +22,7 @@ friends_robots = {}
 friends = None
 #current_name=''
 base_path = 'D:/wechatrecord/'
-robot_friends = ['宝儿','李特尔飞什','Cherry','全万鹏','尚吉峰','郑春']
+robot_friends = ['宝儿','李特尔飞什','Cherry','全万鹏','尚吉峰','郑春','李白']
 
 def get_robots_key_by_friends(msg):
     if check_has_robot(msg):
@@ -125,7 +125,7 @@ def get_response(msg,KEY):
         return
 
 # 使用装饰器
-@itchat.msg_register([TEXT,MAP,SHARING,CARD],isFriendChat=True, isGroupChat=True, isMpChat=True)
+@itchat.msg_register(TEXT ,isFriendChat=True, isGroupChat=True, isMpChat=True)
 def tuling_reply(msg, KEY = '6be4aa0dff5741d48c1000961c6c6b1a'):
     # 为了保证在图灵Key出现问题的时候仍旧可以回复，这里设置一个默认回复
     # 如果图灵Key出现问题，那么reply将会是None
