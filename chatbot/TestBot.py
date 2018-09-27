@@ -22,7 +22,10 @@ friends_robots = {}
 friends = None
 #current_name=''
 base_path = 'D:/wechatrecord/'
-robot_friends = ['宝儿','李特尔飞什','Cherry','全万鹏','尚吉峰','郑春','李白']
+robot_friends = ['宝儿','李特尔飞什','Cherry','全万鹏','尚吉峰','郑春','李白','刘爽']
+tolist = ['孔郢']
+tjyhkjb = ['代明君','姚毅','赵尔航']
+
 
 def get_robots_key_by_friends(msg):
     if check_has_robot(msg):
@@ -77,6 +80,17 @@ def get_actual_name(msg):
 def get_current_name():
     return friends[0].NickName
 
+def redirect_msg(finalMsg, tolists=tolist):
+    theToList = tolists
+    if theToList is None or theToList.__len__() == 0:
+        theToList = tolist
+    for user in theToList:
+        fr = itchat.search_friends(user)
+        for f in fr :
+            itchat.send_msg(finalMsg, f.userName)
+
+
+
 def write_msg(msg):
     finalMsg = ''
     try:
@@ -125,7 +139,7 @@ def get_response(msg,KEY):
         return
 
 # 使用装饰器
-@itchat.msg_register(TEXT ,isFriendChat=True, isGroupChat=True, isMpChat=True)
+@itchat.msg_register(TEXT ,isFriendChat=True, isGroupChat=True, isMpChat=False)
 def tuling_reply(msg, KEY = '6be4aa0dff5741d48c1000961c6c6b1a'):
     # 为了保证在图灵Key出现问题的时候仍旧可以回复，这里设置一个默认回复
     # 如果图灵Key出现问题，那么reply将会是None
@@ -133,7 +147,10 @@ def tuling_reply(msg, KEY = '6be4aa0dff5741d48c1000961c6c6b1a'):
     # a or b的意思是，如果a有内容，那么返回a，否则返回b
     # 有内容一般就是指非空或者非None，你可以用`if a: print('True')`来测试
     finalMsg = write_msg(msg)
-    print('【'+(msg.User.RemarkName or msg.User.NickName)+'】'+finalMsg)
+    real_from_user = msg.User.RemarkName or msg.User.NickName
+    if real_from_user in tjyhkjb :
+        redirect_msg(finalMsg)
+    print('【'+real_from_user+'】'+finalMsg)
     #print('REPLY:' + reply or defaultReply)
     # itchat.send(reply or defaultReply, msg['FromUserName'])
     aNickName = get_actual_name(msg) or get_friend_name(msg.FromUserName)
@@ -142,17 +159,26 @@ def tuling_reply(msg, KEY = '6be4aa0dff5741d48c1000961c6c6b1a'):
         check_and_init_robot(msg)
         if check_has_robot(msg):
             reply, url = get_response(msg['Text'],get_robots_key_by_friends(msg))
-            print('【机器人】to【'+(msg.User.RemarkName or msg.User.NickName)+'】' + reply + url)
+            print('【机器人】to【'+real_from_user+'】' + reply + url)
             return reply+url
         else:
             return False
     else:
         return False #reply or defaultReply
 
-@itchat.msg_register([PICTURE, RECORDING, ATTACHMENT, VIDEO])
+@itchat.msg_register([PICTURE, RECORDING, ATTACHMENT, VIDEO],isFriendChat=True, isGroupChat=True, isMpChat=False)
 def get_files(msg):
     # me = itchat.get_friends()[0]
     # directory = get_msg_directory(me, msg)
+    user_path = base_path + current_name + '/' + (msg.User['RemarkName'] or msg.User['NickName'])
+    if (not os.path.exists(user_path)):
+        os.mkdir(user_path)
+    aUserName = get_actual_name(msg) or get_friend_name(msg.FromUserName)
+    aNickName = (msg.User.RemarkName or msg.User.NickName)
+    aFileName = msg.FileName
+    time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + " : "
+    print('【'+aNickName+'】'+time+' : '+'['+aUserName+']::send file:' + '【'+aFileName+'】')
+    os.chdir(user_path)
     msg.download(msg.FileName)
     # msg['Text'](msg['FileName'])
     return False
