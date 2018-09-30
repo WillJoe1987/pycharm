@@ -23,8 +23,8 @@ friends = None
 #current_name=''
 base_path = 'D:/wechatrecord/'
 robot_friends = ['宝儿','李特尔飞什','Cherry','全万鹏','尚吉峰','郑春','李白','刘爽']
-tolist = ['孔郢']
-tjyhkjb = ['代明君','姚毅','赵尔航']
+tolist = ['孔郢','刘金文','李晶伟']
+tjyhkjb = ['代明君','姚毅','赵尔航','赵子龙','魏莎','王峰','陈云冲-天津银行']
 
 
 def get_robots_key_by_friends(msg):
