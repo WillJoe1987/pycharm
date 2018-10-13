@@ -10,16 +10,18 @@ class HelloFrame(wx.Frame):
 
         # create a panel in the frame
         pnl = wx.Panel(self)
-
-        grd = wx.grid.Grid(self)
+        self.fr = pnl
+       # grd = wx.grid.Grid(self)
 
         # and put some text with a larger bold font on it
-        st = wx.StaticText(pnl, label="Hello World!", pos=(25,25))
+        st = wx.StaticText(pnl, label="Hello World!222\nsalkj", pos=(25,25))
+
         font = st.GetFont()
         font.PointSize += 10
         font = font.Bold()
         st.SetFont(font)
-
+        self.st = st
+        self.chatFrame = wx.TextCtrl(self, pos=(0, 0),size = self.GetSize(), style=wx.TE_MULTILINE | wx.TE_READONLY)
         # create a menu bar
         self.makeMenuBar()
 
@@ -84,7 +86,10 @@ class HelloFrame(wx.Frame):
         wx.MessageBox("This is a wxPython Hello World sample",
                       "About Hello World 2",
                       wx.OK|wx.ICON_INFORMATION)
-
+        self.chatFrame.AppendText("\n")
+        self.chatFrame.AppendText("h2")
+        #self.st.SetLabelText(self.st.GetLabelText() + '\naaaa')
+        #self.st.Set
 
 if __name__ == '__main__':
     # When this module is run (not imported) then create the app, the
