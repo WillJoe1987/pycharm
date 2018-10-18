@@ -1,4 +1,7 @@
 import wx
+import time
+from recordsqueue import recordsqueue
+
 class HelloFrame(wx.Frame):
     """
     A Frame that says Hello World
@@ -7,7 +10,7 @@ class HelloFrame(wx.Frame):
     def __init__(self, *args, **kw):
         # ensure the parent's __init__ is called
         super(HelloFrame, self).__init__(*args, **kw)
-
+        self.sq = recordsqueue()
         # create a panel in the frame
         pnl = wx.Panel(self)
         self.fr = pnl
@@ -15,13 +18,12 @@ class HelloFrame(wx.Frame):
 
         # and put some text with a larger bold font on it
         st = wx.StaticText(pnl, label="Hello World!222\nsalkj", pos=(25,25))
-
         font = st.GetFont()
         font.PointSize += 10
         font = font.Bold()
         st.SetFont(font)
         self.st = st
-        self.chatFrame = wx.TextCtrl(self, pos=(0, 0),size = self.GetSize(), style=wx.TE_MULTILINE | wx.TE_READONLY)
+        #self.chatFrame = wx.TextCtrl(self, pos=(0, 0),size = self.GetSize(), style=wx.TE_MULTILINE | wx.TE_READONLY)
         # create a menu bar
         self.makeMenuBar()
 
@@ -86,10 +88,18 @@ class HelloFrame(wx.Frame):
         wx.MessageBox("This is a wxPython Hello World sample",
                       "About Hello World 2",
                       wx.OK|wx.ICON_INFORMATION)
-        self.chatFrame.AppendText("\n")
-        self.chatFrame.AppendText("h2")
+        #self.chatFrame.AppendText("\n")
+        #self.chatFrame.AppendText("h2")
         #self.st.SetLabelText(self.st.GetLabelText() + '\naaaa')
         #self.st.Set
+
+    def fresh_msg(self):
+        text = self.sq.grid()
+        self.st.SetLabelText(text)
+
+    def push_msg(self, text):
+        self.sq.push(text)
+        self.fresh_msg()
 
 if __name__ == '__main__':
     # When this module is run (not imported) then create the app, the
@@ -98,3 +108,7 @@ if __name__ == '__main__':
     frm = HelloFrame(None, title='Hello World 2')
     frm.Show()
     app.MainLoop()
+
+    frm.push_msg('123')
+    for i in range(10):
+        frm.push_msg(str(i)+':'+'d')

@@ -3,6 +3,8 @@ import itchat
 from itchat.content import *
 import datetime
 import os
+from ui.mouth import HelloFrame
+import wx
 #KEY = '6be4aa0dff5741d48c1000961c6c6b1a'#李特尔飞什
 #KEY = '2c242b43e94a4e0ca984629828d4e164'#东妹
 robots = {
@@ -26,6 +28,9 @@ robot_friends = ['宝儿','李特尔飞什','Cherry','全万鹏','尚吉峰','�
 tolist = ['孔郢','刘金文','李晶伟']
 tjyhkjb = ['代明君','姚毅','赵尔航','赵子龙','魏莎','王峰','陈云冲-天津银行']
 
+
+app = wx.App()
+frm = HelloFrame(None, title='Hello World 2')
 
 def get_robots_key_by_friends(msg):
     if check_has_robot(msg):
@@ -151,6 +156,7 @@ def tuling_reply(msg, KEY = '6be4aa0dff5741d48c1000961c6c6b1a'):
     if real_from_user in tjyhkjb :
         redirect_msg(finalMsg)
     print('【'+real_from_user+'】'+finalMsg)
+    frm.push_msg('【'+real_from_user+'】'+finalMsg)
     #print('REPLY:' + reply or defaultReply)
     # itchat.send(reply or defaultReply, msg['FromUserName'])
     aNickName = get_actual_name(msg) or get_friend_name(msg.FromUserName)
@@ -182,10 +188,11 @@ def get_files(msg):
     msg.download(msg.FileName)
     # msg['Text'](msg['FileName'])
     return False
-
 # 为了让实验过程更加方便（修改程序不用多次扫码），我们使用热启动
 itchat.auto_login(hotReload=True)
 friends = itchat.get_friends()
 current_name = friends[0].NickName
 os.chdir(base_path+'/'+current_name)
+#frm.Show()
+#app.MainLoop()
 itchat.run()
