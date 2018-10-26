@@ -94,7 +94,14 @@ def redirect_msg(finalMsg, tolists=tolist):
         for f in fr :
             itchat.send_msg(finalMsg, f.userName)
 
-
+def send_file(file_dir, tolists=tolist):
+    theToList = tolists
+    if theToList is None or theToList.__len__() == 0:
+        theToList = tolist
+    for user in theToList:
+        fr = itchat.search_friends(user)
+        for f in fr:
+            itchat.send_file(file_dir, f.userName)
 
 def write_msg(msg):
     finalMsg = ''
@@ -187,6 +194,13 @@ def get_files(msg):
     os.chdir(user_path)
     msg.download(msg.FileName)
     # msg['Text'](msg['FileName'])
+    real_from_user = msg.User.RemarkName or msg.User.NickName
+    if real_from_user in tjyhkjb:
+        red_msg = "["+aUserName+"]：发来文件:["+msg.FileName+"]"
+        redirect_msg(red_msg)
+        send_file(user_path+"/"+msg.FileName)
+        # print(msg['Text'](msg['FileName']))
+        print(user_path+"/"+msg.FileName)
     return False
 # 为了让实验过程更加方便（修改程序不用多次扫码），我们使用热启动
 itchat.auto_login(hotReload=True)
