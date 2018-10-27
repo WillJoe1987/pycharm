@@ -1,5 +1,4 @@
 import wx
-import time
 from recordsqueue import recordsqueue
 
 class HelloFrame(wx.Frame):
@@ -107,8 +106,9 @@ if __name__ == '__main__':
     app = wx.App()
     frm = HelloFrame(None, title='Hello World 2')
     frm.Show()
-    app.MainLoop()
-
     frm.push_msg('123')
     for i in range(10):
-        frm.push_msg(str(i)+':'+'d')
+        frm.push_msg(str(i) + ':' + 'd')
+    app.MainLoop()
+    print('123')
+
