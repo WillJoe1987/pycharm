@@ -3,6 +3,7 @@ import itchat
 from itchat.content import *
 import datetime
 import os
+import threading
 
 class wljbot():
     # util config
@@ -86,7 +87,8 @@ class wljbot():
         self.friends = itchat.get_friends()
         self.current_name = self.friends[0].NickName
         os.chdir(self.base_path + '/' + self.current_name)
-        itchat.run()
+        itchat.new_instance().run()
+        #itchat.run()
 
     def get_response(msg, KEY):
         # 构造了要发送给服务器的数据
@@ -206,6 +208,15 @@ class wljbot():
             for f in fr:
                 itchat.send_msg(finalMsg, f.userName)
 
+class runningThread(threading.Thread):
+
+    def __init__(self, bot):
+        threading.Thread.__init__(self)
+        self.bot = bot
+
+    def run(self):
+        print("running")
+        self.bot.run()
 
 bot = wljbot()
 @itchat.msg_register([PICTURE, RECORDING, ATTACHMENT, VIDEO], isFriendChat=True, isGroupChat=True,
@@ -221,4 +232,32 @@ def text_msg(msg):
     print("text")
     bot.tuling_reply(msg)
 
-bot.run()
+
+def run(self, debug=False, blockThread=False):
+    #logger.info('Start auto replying.')
+    #if debug:
+        #set_logging(loggingLevel=logging.DEBUG)
+    print("myrun")
+    def reply_fn():
+        try:
+            while self.alive:
+                self.configured_reply()
+        except KeyboardInterrupt:
+            if self.useHotReload:
+                self.dump_login_status()
+            self.alive = False
+            print('itchat received an ^C and exit.')
+            #logger.debug('itchat received an ^C and exit.')
+            #logger.info('Bye~')
+    if blockThread:
+        reply_fn()
+    else:
+        replyThread = threading.Thread(target=reply_fn)
+        replyThread.setDaemon(True)
+        replyThread.start()
+#itchat.originInstance.run = run
+#itchat.run = itchat.originInstance.run
+itchat.core.Core.run = run
+
+bottread = runningThread(bot)
+bottread.start()

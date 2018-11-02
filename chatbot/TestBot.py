@@ -192,12 +192,16 @@ def get_files(msg):
         red_msg = "["+aUserName+"]：发来文件:["+msg.FileName+"]"
         redirect_msg(red_msg)
         send_file(user_path+"/"+msg.FileName)
-        # print(msg['Text'](msg['FileName']))
         print(user_path+"/"+msg.FileName)
     return False
 # 为了让实验过程更加方便（修改程序不用多次扫码），我们使用热启动
+print("botting!!!")
 itchat.auto_login(hotReload=True)
+print("botting!!!")
 friends = itchat.get_friends()
+print("botting!!!")
 current_name = friends[0].NickName
+print("botting!!!")
 os.chdir(base_path+'/'+current_name)
+print("botting!!!")
 itchat.run()
